@@ -16,34 +16,49 @@
 	text-align: right;
 	margin: 0px;
 }
+
 </style>
 <script type="text/javascript">
-jQuery( function(){	
+var lastId = 0;
+
+function get_comments(){	
+	
 	jQuery.ajax({
 		url: 'http://chengshuguang.com:9898/get_comm',
 	    type: 'GET',
+	    data: 'lastId='+lastId,
 	    dataType: "jsonp",
 	    jsonp: "callback",
 	    jsonpCallback:"get_comm_cb",
 	    
 	    success: function(message){
 
-	      $('#container').empty();
 	      len = message.result.length;
 
 	      console.log("len:"+len);
 	      $.each(message.result, function(idx, comment) {
-	      		add(comment);
+	      		add(comment,0);
+	      		lastId = comment.id;
+	      		console.log(lastId);
 	      });
-	      
+	      if (len >= 10) {
+	      	$("#more").show();
+	      }
+	      else {
+	      	$("#more").hide();
+	      }
 	    },
 	    error: function(){
 	      console.log("pull return error\n");
 	    }
 	  });
 
+}
 
 
+jQuery(
+	function(){
+	get_comments();
 	jQuery('#send_comm').submit( function(){
 		//alert("hee");
 		var title_comm = jQuery('#comm_titile').val();
@@ -81,7 +96,7 @@ jQuery( function(){
 					var com = {};
 					com.titile=titile_tmp;
 					com.content=content_tmp;
-					add(com);
+					add(com,1);
 				}
 
 			},
@@ -94,9 +109,12 @@ jQuery( function(){
 });
 
 
-function add(comment) {
-
+function add(comment, flag) {
+	if (flag == 0)
 	var date = new Date(parseInt(comment.time+'000', 10));
+	else
+	var date = new Date();
+
 	Y = date.getFullYear() + '-';
 	M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
 	D = (date.getDate()< 10 ? '0'+ date.getDate() : date.getDate())+ ' ';
@@ -104,8 +122,12 @@ function add(comment) {
 	H =  (date.getHours()< 10 ? '0'+ date.getHours() : date.getHours())+ ':';
 	Mi =  (date.getMinutes()< 10 ? '0'+ date.getMinutes() : date.getMinutes())+ ':';
 	S =  (date.getSeconds()< 10 ? '0'+ date.getSeconds() : date.getSeconds());
+
+	if (flag==1)
+		var $tt = $("<div></div>").addClass("comm_outter").text(comment.titile).prependTo($('#container'));
+	else
+		var $tt = $("<div></div>").addClass("comm_outter").text(comment.titile).appendTo($('#container'));
 	
-	var $tt = $("<div></div>").addClass("comm_outter").text(comment.titile).prependTo($('#container'));
 	var $xx = $("<p></p>").addClass("time").text(Y+M+D+H+Mi+S);
 	var $yy = $("<div></div>").addClass("comm_inner").text(comment.content);
 	$xx.appendTo($yy);
@@ -120,6 +142,9 @@ function add(comment) {
 	<h1><center><img src="pic/footprint2.png"><img src="pic/footprint.png"> 留下你的足迹 <img src="pic/footprint.png"><img src="pic/footprint2.png"></center></h1>
 	<hr>
 	<div id="container">
+	</div>
+	<div id="more"  style="text-align:center; margin-top:10px">
+	<a  href="javascript:void(0)" onclick="get_comments()">更多留言&nbsp;&raquo;&nbsp;&raquo;</a>
 	</div>
 
 	<br>
