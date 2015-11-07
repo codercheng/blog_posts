@@ -51,7 +51,8 @@ jQuery( function(){
 			alert('输入评论内容!!');
 			return false;
 		}
-		
+		var titile_tmp = title_comm;
+		var content_tmp = content_comm;
 	    title_comm = encodeURIComponent(title_comm)	
 	    content_comm = encodeURIComponent(content_comm)	
 		jQuery.ajax({
@@ -71,6 +72,11 @@ jQuery( function(){
 					jQuery('#comm_titile').val('');
 					jQuery('#comm_content').val('');
 					alert("你的评论已经提交成功，谢谢！")
+
+					var com = {};
+					com.titile=titile_tmp;
+					com.content=content_tmp;
+					add(com);
 				}
 
 			},
