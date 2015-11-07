@@ -1,0 +1,116 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" type="text/css" href="http://chengshuguang.com/blog/css/global.css" />
+    <script src="http://chengshuguang.com/blog/script/jquery.js" type="text/javascript"></script>
+<style type="text/css">
+.comm_outter {
+	border: 1px solid #ccc; margin:5px; padding: 5px; border-radius: 5px
+}
+.comm_inner{
+	padding:3px;margin:3px 5px 3px 25px; border-top:1px solid #ccc;
+}
+
+</style>
+<script type="text/javascript">
+jQuery( function(){	
+	jQuery.ajax({
+		url: 'http://chengshuguang.com:9898/get_comm',
+	    type: 'GET',
+	    dataType: "jsonp",
+	    jsonp: "callback",
+	    jsonpCallback:"get_comm_cb",
+	    
+	    success: function(message){
+
+	      $('#container').empty();
+	      len = message.result.length;
+
+	      console.log("len:"+len);
+	      $.each(message.result, function(idx, comment) {
+	      		add(comment);
+	      });
+	      
+	    },
+	    error: function(){
+	      console.log("pull return error\n");
+	    }
+	  });
+
+
+
+	jQuery('#send_comm').submit( function(){
+		//alert("hee");
+		var title_comm = jQuery('#comm_titile').val();
+		if( jQuery.trim( title_comm ) === '' ){
+			alert('输入主题!!');
+			return false;
+		}
+		var content_comm = jQuery('#comm_content').val();
+		if( jQuery.trim( content_comm ) === '' ){
+			alert('输入评论内容!!');
+			return false;
+		}
+		
+	    title_comm = encodeURIComponent(title_comm)	
+	    content_comm = encodeURIComponent(content_comm)	
+		jQuery.ajax({
+			url: 'http://chengshuguang.com:9898/comm',
+			type: 'GET',
+			data: 'titile=' + title_comm+'&content='+content_comm,
+			dataType: 'jsonp',
+			jsonp: "callback",
+            jsonpCallback:"comm_cb",
+			success: function( payload ){
+				if( payload.status == 'fail' ){
+					alert("failed!");
+				} else if( payload.status == 'empty-message' ){
+					alert('Enter a message!');
+				} else{
+					console.log("comment status:"+payload.status);
+					jQuery('#comm_titile').val('');
+					jQuery('#comm_content').val('');
+					alert("你的评论已经提交成功，谢谢！")
+				}
+
+			},
+			error: function(){
+				alert("undefined err!");
+			}
+		});
+		return false;
+	});
+});
+
+
+function add(comment) {
+	var $tt = $("<div></div>").addClass("comm_outter").text(comment.titile).prependTo($('#container'));
+	var $yy = $("<div></div>").addClass("comm_inner").text(comment.content).appendTo($tt);
+	
+}
+
+</script>
+
+</head>
+<body>
+	<h1><center><img src="pic/footprint2.png"><img src="pic/footprint.png"> 留下你的足迹 <img src="pic/footprint.png"><img src="pic/footprint2.png"></center></h1>
+	<hr>
+	<div id="container">
+		
+	</div>
+
+	<br>
+	<hr>
+	<h1><center>评</center></h1>
+	<h5><center>论</center></h5>
+	<p><center>...</center></p>
+	
+
+	<form id="send_comm" style="padding:1px;">
+	<input id="comm_titile" type="text" style="width:100%; border-radius:5px; margin:5px 3px 2px 3px" placeholder="评论主题(必填)">
+	<textarea id="comm_content" rows="3" style="width:100%; border-radius:5px; margin:3px 3px 1px 3px">评论内容(必填)</textarea>
+	<p style="text-align:right;"><input type="submit" id="comm_btn" style="color:red" value="提交评论"></p>
+	</form>
+	
+</body>
+</html>
