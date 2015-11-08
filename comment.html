@@ -1,6 +1,7 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>评论区</title>
     <link rel="stylesheet" type="text/css" href="http://chengshuguang.com/blog/css/global.css" />
     <script src="http://chengshuguang.com/blog/script/jquery.js" type="text/javascript"></script>
 <style type="text/css">
@@ -66,9 +67,17 @@ jQuery(
 			alert('输入主题!!');
 			return false;
 		}
+		if (title_comm.length > 64) {
+			alert("评论题目不得超过64个字符，目前已经超过"+(title_comm.length-64)+"个字符");
+			return false;
+		}
 		var content_comm = jQuery('#comm_content').val();
 		if( jQuery.trim( content_comm ) === '' ){
 			alert('输入评论内容!!');
+			return false;
+		}
+		if (title_comm.length > 440) {
+			alert("评论题目不得超过440个字符，目前已经超过"+(title_comm.length-440)+"个字符");
 			return false;
 		}
 		var titile_tmp = title_comm;
