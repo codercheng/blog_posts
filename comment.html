@@ -13,11 +13,20 @@
 }
 .time{
 	color:grey;
-	font-size: 2px;
+	font-size: 10px;
 	text-align: right;
 	margin: 0px;
 }
-
+input,textarea {
+	border:0;
+  	background-color:transparent;
+   	color: #0A0A0A;
+  	font-size:15px;
+  	padding: 5px; width:100%;  text-align: center;
+  	outline:none;
+  	line-height:1.5;
+  	font-weight:bold;
+}
 </style>
 <script type="text/javascript">
 var lastId = 0;
@@ -59,6 +68,32 @@ function get_comments(){
 
 jQuery(
 	function(){
+					//tab
+		  	    $("textarea").keydown(function(e) {
+				    if(e.keyCode === 9) { // tab was pressed
+				        // get caret position/selection
+				        var start = this.selectionStart;
+				        var end = this.selectionEnd;
+
+				        var $this = $(this);
+				        var value = $this.val();
+
+				        // set textarea value to: text before caret + tab + text after caret
+				        $this.val(value.substring(0, start)
+				                    + "\t"
+				                    + value.substring(end));
+
+				        // put caret at right position again (add one for the tab)
+				        this.selectionStart = this.selectionEnd = start + 1;
+
+				        // prevent the focus lose
+				        e.preventDefault();
+				    }
+
+				});
+
+
+
 	get_comments();
 	jQuery('#send_comm').submit( function(){
 		//alert("hee");
@@ -149,7 +184,23 @@ function add(comment, flag) {
 </head>
 <body>
 	<h1><center><img src="pic/footprint2.png"><img src="pic/footprint.png"> 留下你的足迹 <img src="pic/footprint.png"><img src="pic/footprint2.png"></center></h1>
+
+	<form id="send_comm" style="padding:1px;">
+	<input id="comm_titile" type="text" style="width:100%; border-radius:5px; margin:5px 3px 2px 3px" placeholder="标题(必填)">
 	<hr>
+	<textarea placeholder="具体的内容(必填)" id="comm_content" rows="2" style="width:100%; border-radius:5px; margin:3px 3px 1px 3px"></textarea>
+	<center>
+	<input type="submit" id="comm_btn" style="color:red" value="提交评论&nbsp;&raquo;&nbsp;&raquo;">
+	</center>
+	</form>
+
+	<hr>
+	<center>
+			<h3>评论列表</h3>
+
+	</center>
+
+
 	<div id="container">
 	</div>
 	<div id="more"  style="text-align:center; margin-top:10px">
@@ -163,11 +214,7 @@ function add(comment, flag) {
 	<p><center>..</center></p>
 	
 
-	<form id="send_comm" style="padding:1px;">
-	<input id="comm_titile" type="text" style="width:100%; border-radius:5px; margin:5px 3px 2px 3px" placeholder="评论主题(必填)">
-	<textarea id="comm_content" rows="3" style="width:100%; border-radius:5px; margin:3px 3px 1px 3px">评论内容(必填)</textarea>
-	<p style="text-align:right;"><input type="submit" id="comm_btn" style="color:red" value="提交评论"></p>
-	</form>
+
 	
 
 	<a href="https://github.com/codercheng/"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://chengshuguang.com/pic_res/fork_me_on_github.png" alt="Fork me on GitHub" data-canonical-src="http://chengshuguang.com/pic_res/fork_me_on_github.png"></a>
